@@ -1,11 +1,18 @@
 {
   "name": "structured-analysis-skill",
-  "description": "Structured Analytic Techniques for Claude Code",
+  "owner": {
+    "name": "Blevene"
+  },
+  "metadata": {
+    "description": "Structured Analytic Techniques for Claude Code",
+    "homepage": "https://github.com/blevene/structured-analysis-skill"
+  },
   "plugins": [
     {
       "name": "structured-analysis",
-      "description": "18 CIA/IC analytic techniques with OSINT evidence gathering, three-layer self-correction, and mandatory citation enforcement. Run /analyze to start.",
-      "path": "."
+      "version": "0.1.0",
+      "source": "./plugin",
+      "description": "18 CIA/IC analytic techniques with OSINT evidence gathering, three-layer self-correction, and mandatory citation enforcement. Run /analyze to start."
     }
   ]
 }
