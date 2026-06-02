@@ -30,7 +30,7 @@ Generated: {{DATE}} | Iteration: {{N}} | Quality Score: {{SCORE}}/5.0
 
 ## Suggested Command
 {{#IF HAS_OPEN_ITEMS}}
-`/analyze --iterate {{ANALYSIS_ID}} {{OPEN_TECHNIQUE_LIST}}`
+`/structured-analysis:analyze --iterate {{ANALYSIS_ID}} {{OPEN_TECHNIQUE_LIST}}`
 {{/IF}}
 {{#IF NO_OPEN_ITEMS}}
 No open iteration items. All identified gaps have been addressed.

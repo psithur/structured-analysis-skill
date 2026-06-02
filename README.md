@@ -8,7 +8,7 @@ AI-augmented [Structured Analytic Techniques](https://www.cia.gov/resources/csi/
 
 Structured Analytic Techniques are rigorous methods developed by the US Intelligence Community to combat cognitive bias in high-stakes analysis. They emerged from decades of intelligence failures — Pearl Harbor, Iraq WMD — where the problem was never lack of information, but lack of structured challenge to dominant assumptions.
 
-This skill brings SATs to Claude Code as an interactive `/analyze` command. Ask a question, and the skill orchestrates evidence gathering, technique selection, structured execution, self-correction, and a cited final report — all grounded in the [CIA Tradecraft Primer (2009)](docs/background/Tradecraft-Primer-apr09.pdf) and modern empirical updates.
+This skill brings SATs to Claude Code as an interactive `/structured-analysis:analyze` command. Ask a question, and the skill orchestrates evidence gathering, technique selection, structured execution, self-correction, and a cited final report — all grounded in the [CIA Tradecraft Primer (2009)](docs/background/Tradecraft-Primer-apr09.pdf) and modern empirical updates.
 
 ## Quick Start
 
@@ -24,10 +24,12 @@ This skill brings SATs to Claude Code as an interactive `/analyze` command. Ask 
 /plugin marketplace add blevene/structured-analysis-skill
 
 # Install the plugin
-/plugin install structured-analysis@blevene
+/plugin install structured-analysis@structured-analysis-skill
 ```
 
-That's it. Run `/analyze` to start your first analysis.
+That's it. Run `/structured-analysis:analyze` to start your first analysis.
+
+> **A note on the command name.** Plugin skills are namespaced by the plugin, so the command is `/structured-analysis:analyze` — that namespaced form is used throughout this README. (If you load the skill some other way and it isn't namespaced, use the bare `/analyze`.)
 
 ### Install via Git Clone
 
@@ -38,23 +40,30 @@ git clone https://github.com/blevene/structured-analysis-skill.git
 cd structured-analysis-skill
 ```
 
-Then open Claude Code in the cloned directory — the skill is discovered automatically from the `skills/` directory.
+Then register your local checkout as a marketplace and install from it:
+
+```bash
+/plugin marketplace add /absolute/path/to/structured-analysis-skill
+/plugin install structured-analysis@structured-analysis-skill
+```
+
+This installs the plugin from your working copy, so local edits are picked up — handy for contributing. The command remains `/structured-analysis:analyze`.
 
 ### Manual Install (Non-Claude Code)
 
 The skill files are plain Markdown — they work with any AI assistant that supports structured prompting. To use them manually:
 
 1. Clone the repository (see above)
-2. Open `skills/structured-analysis/SKILL.md` — this is the skill entry point with all instructions
+2. Open `plugin/skills/analyze/SKILL.md` — this is the skill entry point with all instructions
 3. Feed the contents of `SKILL.md` and `protocols/orchestrator.md` into your AI assistant as system context
 4. For each technique, provide the relevant protocol file from `protocols/techniques/` and template from `templates/techniques/`
 5. The `docs/library/` directory contains the full reference knowledge base if your assistant needs theoretical grounding
 
 The key files to provide as context:
-- `skills/structured-analysis/SKILL.md` — orchestration instructions
-- `skills/structured-analysis/protocols/orchestrator.md` — mode routing and technique selection
-- `skills/structured-analysis/protocols/evidence-collector.md` — evidence gathering process
-- `skills/structured-analysis/templates/report-template.md` — output structure
+- `plugin/skills/analyze/SKILL.md` — orchestration instructions
+- `plugin/skills/analyze/protocols/orchestrator.md` — mode routing and technique selection
+- `plugin/skills/analyze/protocols/evidence-collector.md` — evidence gathering process
+- `plugin/skills/analyze/templates/report-template.md` — output structure
 - `docs/library/00-prime.md` — master reference for all techniques
 
 ### Optional: OSINT Setup
@@ -87,7 +96,7 @@ Without any web tools, the skill still works — it just uses conversation conte
 ### First Analysis
 
 ```
-/analyze What are the strategic implications of quantum computing for national cybersecurity?
+/structured-analysis:analyze What are the strategic implications of quantum computing for national cybersecurity?
 ```
 
 The skill will:
@@ -102,12 +111,12 @@ Output is a structured report with cited key judgments, confidence levels, a mon
 
 ### Context-Aware Invocation
 
-The skill reads conversation history before starting. If you've been discussing a problem, sharing files, or pasting data, just run `/analyze` — the skill infers your intent from context:
+The skill reads conversation history before starting. If you've been discussing a problem, sharing files, or pasting data, just run `/structured-analysis:analyze` — the skill infers your intent from context:
 
 ```
 User: I'm worried about our API latency. Here's the trace data: [pastes traces]
 User: Could be the new caching layer, or maybe the DB connection pool is saturated.
-User: /analyze
+User: /structured-analysis:analyze
 ```
 
 The skill picks up the problem, the evidence, and the competing explanations, then confirms before proceeding:
@@ -124,7 +133,7 @@ Prior context: Trace data pasted above (Tier 1 evidence)
 Does this look right? Adjust anything before I proceed.
 ```
 
-Explicit arguments always take precedence. If you run `/analyze premortem`, the skill uses your technique choice but still surfaces useful context ("I noticed you shared trace data — I'll include that as evidence.").
+Explicit arguments always take precedence. If you run `/structured-analysis:analyze premortem`, the skill uses your technique choice but still surfaces useful context ("I noticed you shared trace data — I'll include that as evidence.").
 
 ## Using Local Evidence
 
@@ -133,7 +142,7 @@ The skill collects evidence from three tiers: conversation context, local files,
 **Mention files in your prompt:**
 
 ```
-/analyze Should we migrate to Kubernetes?
+/structured-analysis:analyze Should we migrate to Kubernetes?
 
 Context:
 - Architecture doc: docs/architecture.md
@@ -144,7 +153,7 @@ Context:
 **Paste data directly** (becomes Tier 1 evidence, cited as `[User-provided, session context]`):
 
 ```
-/analyze Is our Q4 revenue forecast realistic?
+/structured-analysis:analyze Is our Q4 revenue forecast realistic?
 
 Key data points:
 - Q3 revenue: $4.2M (up 12% QoQ)
@@ -163,13 +172,13 @@ All tiers combine into a unified evidence registry. Use `--no-osint` to skip web
 
 | Command | Description |
 |---------|-------------|
-| `/analyze` | Auto-select techniques based on problem characteristics |
-| `/analyze ach` | Run a single named technique directly |
-| `/analyze --guided` | Walk through all analytical phases step by step |
-| `/analyze --lean` | Abbreviated technique set (fast, ~15 min) |
-| `/analyze --resume <id>` | Continue or update a previous analysis |
-| `/analyze --iterate <id>` | Re-run full analysis with new evidence |
-| `/analyze --iterate <id> ach` | Re-run specific technique(s) only |
+| `/structured-analysis:analyze` | Auto-select techniques based on problem characteristics |
+| `/structured-analysis:analyze ach` | Run a single named technique directly |
+| `/structured-analysis:analyze --guided` | Walk through all analytical phases step by step |
+| `/structured-analysis:analyze --lean` | Abbreviated technique set (fast, ~15 min) |
+| `/structured-analysis:analyze --resume <id>` | Continue or update a previous analysis |
+| `/structured-analysis:analyze --iterate <id>` | Re-run full analysis with new evidence |
+| `/structured-analysis:analyze --iterate <id> ach` | Re-run specific technique(s) only |
 
 ### Flags
 
@@ -180,7 +189,7 @@ All tiers combine into a unified evidence registry. Use `--no-osint` to skip web
 | `--no-osint` | Disable web research — use only conversation context and local files |
 | `--iterate <id>` | Re-run with artifact versioning and evidence delta tracking |
 
-Flags combine: `/analyze --guided --no-osint` runs all phases without web research.
+Flags combine: `/structured-analysis:analyze --guided --no-osint` runs all phases without web research.
 
 ### Techniques
 
@@ -207,7 +216,7 @@ Flags combine: `/analyze --guided --no-osint` runs all phases without web resear
 
 ### Example Output
 
-Running `/analyze ach` on a ransomware attribution problem produces:
+Running `/structured-analysis:analyze ach` on a ransomware attribution problem produces:
 
 ```markdown
 # Analysis of Competing Hypotheses: Ransomware Attribution
@@ -264,7 +273,7 @@ Self-critique identified 1 additional item:
 1. **Missing perspectives** [MEDIUM]: No technical operator viewpoint represented
    → Re-run: narratives | Evidence focus: Collect evidence from the missing viewpoint
 
-Suggested command: /analyze --iterate 2026-02-15-cybersecurity-assessment narratives
+Suggested command: /structured-analysis:analyze --iterate 2026-02-15-cybersecurity-assessment narratives
 ```
 
 ### Manual Iteration
@@ -272,7 +281,7 @@ Suggested command: /analyze --iterate 2026-02-15-cybersecurity-assessment narrat
 Run the suggested command (or modify it) to iterate without losing the reasoning trail:
 
 ```
-/analyze --iterate 2026-02-15-cybersecurity-assessment ach
+/structured-analysis:analyze --iterate 2026-02-15-cybersecurity-assessment ach
 ```
 
 The iteration protocol:
@@ -374,19 +383,19 @@ Question → Orchestrator → Evidence Collector → Technique Dispatch → Self
                 └─── Manual Iterate (--iterate) ← artifact versioning + evidence delta
 ```
 
-**Orchestrator** — The [orchestrator protocol](skills/structured-analysis/protocols/orchestrator.md) handles mode detection, technique selection, and workflow management. In adaptive mode, it uses a 14-question rubric to match problem characteristics to appropriate techniques.
+**Orchestrator** — The [orchestrator protocol](plugin/skills/analyze/protocols/orchestrator.md) handles mode detection, technique selection, and workflow management. In adaptive mode, it uses a 14-question rubric to match problem characteristics to appropriate techniques.
 
 **Technique Dispatch** — When 2+ techniques are selected, the orchestrator dispatches them to background subagents in dependency-aware tiers. Tier 1 techniques (brainstorm, kac) run first; tier 2 (ach, cross-impact, inconsistencies) wait for tier 1 outputs; tier 3 and 4 cascade similarly. Within each tier, techniques run in parallel. Each subagent reads its protocol and template, executes the full technique workflow, writes the artifact to disk, and returns only a compact findings summary. The main context window accumulates summaries and file paths — not full technique work — preserving budget for synthesis, follow-ups, and iteration. Single-technique runs (Direct mode) execute in-context to avoid subagent overhead.
 
-**Evidence Collector** — The [evidence collector](skills/structured-analysis/protocols/evidence-collector.md) gathers evidence across three tiers (conversation, local files, OSINT). OSINT uses a four-step pipeline: theme planning generates adaptive search themes based on problem domain, technique needs, and stakeholder perspectives (3 core + 3/5/7 adaptive themes scaling by mode); foreground subagents scrape raw content to disk; background subagents extract structured evidence; then the main context integrates everything into the registry. This keeps raw web content out of the context window. MCP tools are only available in the main conversation and foreground subagents, not background subagents — the pipeline is designed around this constraint.
+**Evidence Collector** — The [evidence collector](plugin/skills/analyze/protocols/evidence-collector.md) gathers evidence across three tiers (conversation, local files, OSINT). OSINT uses a four-step pipeline: theme planning generates adaptive search themes based on problem domain, technique needs, and stakeholder perspectives (3 core + 3/5/7 adaptive themes scaling by mode); foreground subagents scrape raw content to disk; background subagents extract structured evidence; then the main context integrates everything into the registry. This keeps raw web content out of the context window. MCP tools are only available in the main conversation and foreground subagents, not background subagents — the pipeline is designed around this constraint.
 
 **Evidence Sufficiency Gate** — After collection, hard checks (minimum count, quality floor) can halt the analysis; soft checks (source diversity, diagnostic coverage, temporal recency) log warnings that surface in the report.
 
 **Self-Correction** — Three layers plus an auto-remediation gate: (1) protocol compliance after each technique, (2) analytical self-critique before report synthesis with severity-classified flags, (3) human review gate before finalization. Between layers 2 and 3, the **Auto-Remediation Gate** checks for HIGH-severity flags (evidence imbalance, unstated critical premises, strong counter-arguments, analytical bias, quality failures). If any exist, it automatically invokes the iteration handler to collect targeted evidence, re-run flagged techniques (max 3, max 1 cycle), and regenerate the report — all before the user sees output. MEDIUM/LOW flags are presented as manual iteration suggestions.
 
-**Iteration Handler** — The [iteration handler](skills/structured-analysis/protocols/iteration-handler.md) manages artifact versioning, evidence delta tracking, and cross-iteration synthesis when re-running techniques.
+**Iteration Handler** — The [iteration handler](plugin/skills/analyze/protocols/iteration-handler.md) manages artifact versioning, evidence delta tracking, and cross-iteration synthesis when re-running techniques.
 
-**Report Generator** — The [report generator](skills/structured-analysis/protocols/report-generator.md) synthesizes technique outputs into a final assessment with confidence ratings, monitoring plan, and citation registry.
+**Report Generator** — The [report generator](plugin/skills/analyze/protocols/report-generator.md) synthesizes technique outputs into a final assessment with confidence ratings, monitoring plan, and citation registry.
 
 ### Citation Methods
 
@@ -405,26 +414,28 @@ Every claim must be cited. Five methods:
 ```
 structured-analysis-skill/
 ├── .claude-plugin/
-│   ├── plugin.json                   # Plugin manifest
-│   └── marketplace.json              # Marketplace discovery
-├── skills/structured-analysis/
-│   ├── SKILL.md                      # Skill entry point
-│   ├── protocols/
-│   │   ├── orchestrator.md           # Mode routing and selection logic
-│   │   ├── evidence-collector.md     # Evidence gathering and OSINT
-│   │   ├── report-generator.md       # Report synthesis
-│   │   ├── iteration-handler.md      # Artifact versioning and iteration logic
-│   │   └── techniques/              # 18 technique execution protocols
-│   └── templates/
-│       ├── report-template.md        # Final report structure
-│       ├── evidence-registry-template.md
-│       ├── monitoring-plan-template.md
-│       ├── review-summary-template.md  # Phase A → Phase B handoff summary
-│       ├── meta-template.md
-│       ├── iteration-meta-template.md # Per-iteration metadata
-│       ├── next-steps-template.md    # Iteration suggestions ledger
-│       ├── techniques/              # 18 technique artifact templates
-│       └── sections/                # Reusable report components
+│   └── marketplace.json              # Marketplace discovery (source: ./plugin)
+├── plugin/                           # The installable plugin
+│   ├── .claude-plugin/
+│   │   └── plugin.json               # Plugin manifest
+│   └── skills/analyze/               # Skill name → command /structured-analysis:analyze
+│       ├── SKILL.md                  # Skill entry point
+│       ├── protocols/
+│       │   ├── orchestrator.md       # Mode routing and selection logic
+│       │   ├── evidence-collector.md # Evidence gathering and OSINT
+│       │   ├── report-generator.md   # Report synthesis
+│       │   ├── iteration-handler.md  # Artifact versioning and iteration logic
+│       │   └── techniques/           # 18 technique execution protocols
+│       └── templates/
+│           ├── report-template.md    # Final report structure
+│           ├── evidence-registry-template.md
+│           ├── monitoring-plan-template.md
+│           ├── review-summary-template.md  # Phase A → Phase B handoff summary
+│           ├── meta-template.md
+│           ├── iteration-meta-template.md  # Per-iteration metadata
+│           ├── next-steps-template.md      # Iteration suggestions ledger
+│           ├── techniques/           # 18 technique artifact templates
+│           └── sections/             # Reusable report components
 ├── docs/
 │   ├── library/                     # Reference knowledge base (10 files)
 │   ├── background/                  # Source materials (CIA Primer + analyses)

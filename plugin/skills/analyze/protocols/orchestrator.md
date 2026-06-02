@@ -56,7 +56,7 @@ Flags combine with modes: `--guided --no-osint` is valid.
 | `alt-futures` | `protocols/techniques/alternative-futures.md` | `templates/techniques/alternative-futures.md` | `alt-futures.md` | Foresight |
 | `deception` | `protocols/techniques/deception-detection.md` | `templates/techniques/deception-detection.md` | `deception.md` | Diagnostic |
 
-All paths are relative to the skill directory (`skills/structured-analysis/`).
+All paths are relative to the skill directory (`plugin/skills/analyze/`).
 
 ---
 
@@ -476,6 +476,6 @@ Auto-remediation appears in meta.md as a standard iteration entry:
 
 ### Interaction with Iterate Mode
 
-- If the user later runs `/analyze --iterate`, it builds on top of the auto-remediation iteration (iteration 3+)
+- If the user later runs `/structured-analysis:analyze --iterate`, it builds on top of the auto-remediation iteration (iteration 3+)
 - Auto-remediation and user-initiated iteration share the same versioning scheme (`.vN.md` archives)
 - The iteration handler treats auto-remediation identically to user-invoked iteration — no special-casing needed beyond the trigger type label

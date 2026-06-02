@@ -12,20 +12,22 @@ Apply CIA/IC Structured Analytic Techniques to produce defensible, evidence-base
 ## Invocation
 
 ```
-/analyze                          → Adaptive mode (auto-select techniques)
-/analyze <technique>              → Direct mode (run one technique)
-/analyze --guided                 → Guided mode (walk through all phases)
-/analyze --resume <analysis-id>   → Resume or update existing analysis
-/analyze --iterate <analysis-id>                → Re-run full analysis with new evidence
-/analyze --iterate <analysis-id> <technique>    → Re-run specific technique(s)
-/analyze --lean                   → Lean mode (abbreviated technique set)
-/analyze --comprehensive          → Comprehensive mode (full rubric, adversarial + deception checks)
-/analyze --no-osint               → Disable web research
+/structured-analysis:analyze                          → Adaptive mode (auto-select techniques)
+/structured-analysis:analyze <technique>              → Direct mode (run one technique)
+/structured-analysis:analyze --guided                 → Guided mode (walk through all phases)
+/structured-analysis:analyze --resume <analysis-id>   → Resume or update existing analysis
+/structured-analysis:analyze --iterate <analysis-id>                → Re-run full analysis with new evidence
+/structured-analysis:analyze --iterate <analysis-id> <technique>    → Re-run specific technique(s)
+/structured-analysis:analyze --lean                   → Lean mode (abbreviated technique set)
+/structured-analysis:analyze --comprehensive          → Comprehensive mode (full rubric, adversarial + deception checks)
+/structured-analysis:analyze --no-osint               → Disable web research
 ```
+
+> Commands use the plugin (namespaced) form `/structured-analysis:analyze`. If the skill is loaded un-namespaced, drop the prefix and use the bare `/analyze`.
 
 Techniques: `customer-checklist`, `issue-redefinition`, `restatement`, `brainstorm`, `kac`, `ach`, `inconsistencies`, `cross-impact`, `what-if`, `premortem`, `counterfactual`, `narratives`, `bowtie`, `opportunities`, `devils-advocacy`, `red-hat`, `alt-futures`, `deception`
 
-Flags combine: `/analyze --guided --no-osint` is valid.
+Flags combine: `/structured-analysis:analyze --guided --no-osint` is valid.
 
 ## Execution
 
@@ -33,7 +35,7 @@ Flags combine: `/analyze --guided --no-osint` is valid.
 
 ### Step 0 — Context Inference
 
-Before parsing explicit arguments, scan the conversation history for implicit inputs. Users often invoke `/analyze` mid-conversation after discussing a problem, providing data, or sharing links.
+Before parsing explicit arguments, scan the conversation history for implicit inputs. Users often invoke `/structured-analysis:analyze` mid-conversation after discussing a problem, providing data, or sharing links.
 
 Extract from conversation context:
 - **Problem statement**: What is the user trying to analyze? Look for questions, concerns, scenarios, or decisions under discussion.
@@ -87,7 +89,7 @@ If no conversation context exists and no arguments were provided, proceed direct
   - 3h. Quality score (quantitative 1-5 with pass/fail threshold)
 - **Layer 3** (before finalization): Human review gate — present summary (including quality score), incorporate feedback
 - **Auto-Remediation Gate** (between Phase A and Phase B): HIGH-severity Layer 2 flags (evidence imbalance >2:1, unstated critical premises, strong counter-arguments, sycophancy/anchoring bias, quality score < 3.0) trigger automatic remediation — the orchestrator invokes the iteration handler to collect targeted evidence, re-run flagged techniques (max 3), and regenerate the report before the user sees it. Capped at 1 cycle. Zero overhead when no HIGH flags exist.
-- **Critique-to-Iteration Bridge** (after results): Remaining MEDIUM/LOW flags from Layer 1 and Layer 2 are mapped to specific technique re-runs and evidence collection focuses, presented as ready-to-run `/analyze --iterate` commands. Only fires when actionable flags exist beyond what auto-remediation already addressed. All flags and their statuses are written to `next-steps.md` in the analysis root — a standalone ledger tracking OPEN, REMEDIATED, RESOLVED, and DEFERRED items across iterations. The `--iterate` handler reads this file as its primary input.
+- **Critique-to-Iteration Bridge** (after results): Remaining MEDIUM/LOW flags from Layer 1 and Layer 2 are mapped to specific technique re-runs and evidence collection focuses, presented as ready-to-run `/structured-analysis:analyze --iterate` commands. Only fires when actionable flags exist beyond what auto-remediation already addressed. All flags and their statuses are written to `next-steps.md` in the analysis root — a standalone ledger tracking OPEN, REMEDIATED, RESOLVED, and DEFERRED items across iterations. The `--iterate` handler reads this file as its primary input.
 
 ## Citation Requirement
 

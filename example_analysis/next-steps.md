@@ -109,4 +109,4 @@ No evidence on developer economics in India, Southeast Asia, MENA, or LATAM. The
 - **Evidence focus**: Developer economics in growth regions; emerging market studio formation rates; localization and market entry strategies.
 
 ## Suggested Command
-`/analyze --iterate 2026-03-26-mobile-gaming-marketplace-growth-impact kac ach what-if devils-advocacy narratives`
+`/structured-analysis:analyze --iterate 2026-03-26-mobile-gaming-marketplace-growth-impact kac ach what-if devils-advocacy narratives`

@@ -189,7 +189,7 @@ After cross-iteration synthesis, update `analyses/{{ANALYSIS_ID}}/next-steps.md`
 
 3. **Update summary counts**: Recalculate TOTAL, REMEDIATED, RESOLVED, and OPEN counts in the Summary line
 
-4. **Update suggested command**: Regenerate the `/analyze --iterate` command with only the techniques from remaining `OPEN` items. If no `OPEN` items remain, replace with: `"No open iteration items. All identified gaps have been addressed."`
+4. **Update suggested command**: Regenerate the `/structured-analysis:analyze --iterate` command with only the techniques from remaining `OPEN` items. If no `OPEN` items remain, replace with: `"No open iteration items. All identified gaps have been addressed."`
 
 5. **Update header**: Set `Iteration: {{CURRENT_ITER}}` and update Quality Score if a new score was produced
 

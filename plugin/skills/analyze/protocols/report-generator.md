@@ -289,7 +289,7 @@ Self-critique identified {{REMAINING_COUNT}} additional items:
    → Re-run: {{TECHNIQUES}} | Evidence focus: {{FOCUS}}
 {{/EACH}}
 
-Suggested command: `/analyze --iterate {{ANALYSIS_ID}} {{TECHNIQUE_LIST}}`
+Suggested command: `/structured-analysis:analyze --iterate {{ANALYSIS_ID}} {{TECHNIQUE_LIST}}`
 {{/IF}}
 
 {{#IF NO_FLAGS}}
